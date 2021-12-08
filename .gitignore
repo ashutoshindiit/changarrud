@@ -16,4 +16,4 @@ yarn-error.log
 *.zip
 *.sql
 /phpmyadmin
-/Backup   
+.htaccess
