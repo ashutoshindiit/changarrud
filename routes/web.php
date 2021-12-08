@@ -35,8 +35,7 @@ use App\Http\Controllers\FeatureController;
 |
 
 */
-    Route::any('/', [CmsController::class, 'index']);
-
+	Route::any('/', [CmsController::class, 'index']);
     // Route::any('/home/index', [CmsController::class, 'index']);
     Route::any('/about-us', [CmsController::class, 'getAboutUs']);
     Route::any('/blog', [CmsController::class, 'getBlog']);
