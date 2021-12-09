@@ -19,6 +19,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+
 Route::post('/register', [ApiController::class, 'seller_registration']);
 Route::post('/resend-verification-code', [ApiController::class, 'resendVerificationCode']);
 Route::post('/otp_verification', [ApiController::class, 'otp_verification']);
@@ -71,14 +72,14 @@ Route::post('/otp_verification', [ApiController::class, 'otp_verification']);
         Route::post('/change-product-status/{product_id}', [ApiController::class, 'changeStatusProduct']);
         Route::post('/change-product-category-status/{category_id}', [ApiController::class, 'changeStatusCategory']);
 
-        Route::get('/get-pendingOrder',   [ApiController::class, 'getPendingOrder']);
-        Route::get('/get-shippedOrder',   [ApiController::class, 'getShippedOrder']);
+        Route::post('/get-pendingOrder',   [ApiController::class, 'getPendingOrder']);
+        Route::post('/get-shippedOrder',   [ApiController::class, 'getShippedOrder']);
 
-        Route::get('/get-acceptedOrder',  [ApiController::class, 'getAcceptedOrder']);
+        Route::post('/get-acceptedOrder',  [ApiController::class, 'getAcceptedOrder']);
         Route::get('/get-rejectedOrder',  [ApiController::class, 'getRejectedOrder']);
         Route::get('/get-cancelledOrder', [ApiController::class, 'getCancelledOrder']);
         Route::get('/get-deliveredOrder', [ApiController::class, 'getDeliveredOrder']);
-        Route::get('/get-sellerCustomers', [ApiController::class, 'getSellerCustomer']);
+        Route::post('/get-sellerCustomers', [ApiController::class, 'getSellerCustomer']);
 
         Route::get('/get-seller-extra-charge', [ApiController::class, 'getSellerExtraChargeList']);
         Route::post('/add-seller-extra-charge', [ApiController::class, 'addSellerExtraCharge']);
@@ -89,14 +90,26 @@ Route::post('/otp_verification', [ApiController::class, 'otp_verification']);
 
         Route::get('/get-seller-gst-charge', [ApiController::class, 'getSellerGstChargeList']);
 
-
         Route::get('/get-all-units', [ApiController::class, 'getAllUnits']);
-
-
-
 
         // QrCodeGenerate
         Route::get('/get-qrCodeGenerate', [ApiController::class, 'QrCodeGenerate']);
+
+        //Change order status
+        Route::post('/change-seller-app-status', [ApiController::class, 'changeSellerAppStatus']);
+        
+        Route::post('/search-product', [ApiController::class, 'searchProduct']);
+        Route::post('/search-category', [ApiController::class, 'searchCategory']);
+        Route::post('/search-order-number', [ApiController::class, 'searchOrderNumber']);
+
+        Route::post('/life-time-filter', [ApiController::class, 'lifeTimeFilter']);
+
+        //Extra Form
+        Route::get('/get-store-setting', [ApiController::class, 'getStoreSetting']);
+        Route::post('/add-store-setting', [ApiController::class, 'addStoreSetting']);        
+        Route::post('/update-store-setting/{id}', [ApiController::class, 'updateStoreSetting']);        
+        Route::post('/delete-store-setting/{id}', [ApiController::class, 'deleteStoreSetting']);        
+
 
         Route::post('/sign-out', [ApiController::class, 'logout']);
     });

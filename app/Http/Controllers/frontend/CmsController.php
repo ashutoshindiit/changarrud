@@ -237,7 +237,8 @@ class CmsController extends Controller
             }
         }
         $homepageInformation = HomepageInformation::first();
-
+echo "ih";
+exit;
         $pages = Page::get();   
         return view('frontend.landingPages.contact',compact('pages','homepageInformation'));
     }

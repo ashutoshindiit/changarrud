@@ -22,7 +22,7 @@ class GuestAuth
             $cookie_value = date('Ymdhis');
             // echo "<pre>"; print_r($cookie_value); die;
             setcookie($cookie_name, $cookie_value, time() + (86400), "/"); // 86400 = 1 day
-            return redirect(Request::url());
+            return $next($request);
 
         }
         return $next($request);

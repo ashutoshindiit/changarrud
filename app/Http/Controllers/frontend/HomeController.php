@@ -34,6 +34,12 @@ use DateTime;
 use Date;
 use Auth;
 use App\Models\SellerAdditionalInformation;
+use App\Models\Blog;
+use App\Models\BlogCategory;
+use App\Models\ChangarruFeature;
+use App\Models\HomepageInformation;
+use App\Models\Testimonial;
+use App\Models\Page;
 
 class HomeController extends Controller
 
@@ -691,8 +697,29 @@ class HomeController extends Controller
 
 
 
-    public function dashboard(Request $request , $slug) { 
+    public function dashboard(Request $request , $slug='') { 
+      if(empty($slug)){
+        $blogs  = Blog::with('blogCategory')
+                        ->whereNull('deleted_at')
+                        ->orderBy('id','desc')
+                        ->get();
+        
+        $sellerCategories = SellerCategory::whereNull('deleted_at')
+                                            ->orderBy('id','desc')
+                                            ->get();
 
+        $ChangarruFeatures   = ChangarruFeature::orderBy('id','desc')
+                                            ->limit('4')
+                                            ->get();
+
+        $homepageInformation = HomepageInformation::first();
+
+        $testimonials = Testimonial::get();
+
+        $pages = Page::get();   
+
+        return view('frontend.landingPages.index',compact('blogs','sellerCategories','ChangarruFeatures','homepageInformation','testimonials','pages'));
+      }
       $input = $request->all();
       $sellers  = Seller::with('buisnessCategory')->where('slug',$slug)->first();
       
@@ -1461,6 +1488,5 @@ class HomeController extends Controller
         return view('frontend.terms-conditions',compact('termAndCondtions','slug'));
     } 
 
-    
 }
 

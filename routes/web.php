@@ -54,7 +54,7 @@ use App\Http\Controllers\FeatureController;
 
 	Route::group(['middleware'=>'GuestAuth'],function(){
 
-		Route::any('/{slug}', [HomeController::class, 'dashboard']);
+		Route::any('/{slug?}', [HomeController::class, 'dashboard']);
 
 		Route::any('/home/category-wise/product', [HomeController::class, 'getCategoryWiseDetail']);
 
@@ -274,4 +274,4 @@ use App\Http\Controllers\FeatureController;
 		});
 
 
-		define('defaultAdminImagePath',asset('public/admin/images/'));
+		//define('defaultAdminImagePath',asset('public/admin/images/'));

@@ -115,7 +115,10 @@ margin: 0 auto;
 				<h2>{{@$homepageInformation['page_title']}}</h2>
 				<h1>{{strip_tags(@$homepageInformation['title'])}}</h1>
 				<p>{!!strip_tags(@$homepageInformation['description'])!!}</p>
-				<a class="btn btn-info custombtn1" href="{{url('/store-directory')}}">Get Started</a>
+				{{--<a class="btn btn-info custombtn1" href="{{url('/store-directory')}}">Descarga desde tu smartphone:</a> --}}
+				<p>Descarga desde tu smartphone:</p>
+				<a href="{{@$homepageInformation['google_play_store_link']}}"><img src="{{asset('public/frontend/landingPage/assets/images/google.png')}}" class="img-fluid mr-3" /></a>
+				<a href="{{@$homepageInformation['apple_play_store_link']}}"><img src="{{asset('public/frontend/landingPage/assets/images/appstore.png')}}" class="img-fluid" /></a>
 			</div>
 			<div class="col-md-6">
 				<div class="bannerBox">
@@ -134,7 +137,7 @@ margin: 0 auto;
 				<div class="divider_line"></div>
 				<h2>{{@$homepageInformation['feature_title']}}</h2>
 				<p>{{strip_tags(@$homepageInformation['feature_description'])}}</p>
-				<a href='javascript:;' class="info">See More Information <img src="{{asset('public/frontend/landingPage/assets/images/arrowl.svg')}}" /></a>
+				{{--<a href='javascript:;' class="info">See More Information <img src="{{asset('public/frontend/landingPage/assets/images/arrowl.svg')}}" /></a>--}}
 			</div>
 
 			<div class="col-md-7">
@@ -219,20 +222,17 @@ margin: 0 auto;
 		</div>
 	</div>
 </section>
-
-<section class="features pb80">
+<?php 
+    $dummyImg_new = asset('public/frontend/landingPage/assets/images/video.png');
+    $dummyImg_footer = asset('public/frontend/landingPage/assets/images/footer.png');
+?>
+{{-- <section class="features pb80">
 	<img src="{{asset('public/frontend/landingPage/assets/images/shape4.svg')}}" class="fixImg4" class="img-fluid" />
 	<div class="container">
 		<div class="row">
 			<div class="col-lg-8 offset-lg-2 col-md-10 offset-md-1 text-center">
                 <div class="divider_line m-auto"></div>
 				<h2 class="mt-4">{{@$homepageInformation['video_title']}}</h2>
-
-				<?php 
-				    $dummyImg_new = asset('public/frontend/landingPage/assets/images/video.png');
-				    $dummyImg_footer = asset('public/frontend/landingPage/assets/images/footer.png');
-				?>
-				
 
 				<div class="videoBox mt-5 buttonNew1" style="background-image: url('{{ $dummyImg_new }}');">
 					<svg version="1.1" id="play" x="0px" y="0px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
@@ -246,7 +246,7 @@ margin: 0 auto;
 			</div>
 		</div>
 	</div>
-</section>
+</section> --}}
     
      <div id="lightbox1" class="lightbox1">
             <i class="fa fa-times close-btn1"></i>

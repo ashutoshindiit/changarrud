@@ -7,32 +7,32 @@
                 <p>{!!@$homepageInformation['footer_description']!!}</p>
             </div>
             <div class="col-lg-3 col-md-6">
-                <h3>Company</h3>
+                <h3>Compañía</h3>
                 <ul>
-                    <li> <a href="{{url('/about-us')}}">About</a></li>
+                    <li> <a href="{{url('/about-us')}}">Acerca de</a></li>
                     <?php foreach ($pages as $key => $page): ?>
                         <li> <a href="{{url('/page/'.$page->page_name)}}">{{$page['title']}}</a></li>
                     <?php endforeach ?>
-                    <li> <a href="{{url('/contact-us')}}">Contact</a></li>
-                    <li> <a href="{{url('/faq')}}">FAQs </a></li>
+                    <li> <a href="{{url('/contact-us')}}">Contacto</a></li>
+                    <li> <a href="{{url('/faq')}}">Preguntas frecuentes</a></li>
                 </ul>
             </div>
             <div class="col-lg-3 col-md-6">
-                <h3>Region</h3>
+                <h3>Región</h3>
                 <ul>
-                    <li> <a href="{{url('/store-directory')}}">Stores Directory</a></li>
-                    <li> <a href="#">Banned Items</a></li>
-                    <li> <a href="#">Help</a></li>
+                    {{-- <li> <a href="{{url('/store-directory')}}">Stores Directory</a></li> --}}
+                    <li> <a href="#">Artículos prohibidos</a></li>
+                    <li> <a href="#">Ayudar</a></li>
                     <li> <a href="{{url('/blog')}}">Blog</a></li>
                 </ul>
             </div>
             <div class="col-lg-3 col-md-6">
-                <h3>Help</h3>
+                <h3>Ayudar</h3>
                 <ul>
-                    <li> <a href="#">Help center</a></li>
-                    <li> <a href="#">Contact support</a></li>
-                    <li> <a href="#">Instructions</a></li>
-                    <li> <a href="#">How it works</a></li>
+                    <li> <a href="#">Centro de ayuda</a></li>
+                    <li> <a href="#">Soporte de contacto</a></li>
+                    <li> <a href="#">Instrucciones</a></li>
+                    <li> <a href="#">Cómo funciona</a></li>
                 </ul>
             </div>
         </div>    

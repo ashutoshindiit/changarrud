@@ -31,12 +31,12 @@
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="navbar-nav">
-              <li class="nav-item"> <a class="nav-link" href="{{url('/')}}">Home <span class="sr-only">(current)</span></a> </li>
-              <li class="nav-item"> <a class="nav-link" href="{{url('/about-us')}}">About us</a> </li>
+              <li class="nav-item"> <a class="nav-link" href="{{url('/')}}">Inicio <span class="sr-only">(current)</span></a> </li>
+              <li class="nav-item"> <a class="nav-link" href="{{url('/about-us')}}">Acerca de Nosotros</a> </li>
               <li class="nav-item"> <a class="nav-link" href="{{url('/blog')}}">Blog</a> </li>
-              <li class="nav-item"> <a class="nav-link" href="{{url('/faq')}}">Faq</a> </li>
+              <li class="nav-item"> <a class="nav-link" href="{{url('/faq')}}">Preguntas Frecuentes</a> </li>
             </ul>
-            <a class="btn btn-info custombtn ml-md-auto" href="{{url('/contact-us')}}"><i class="fas fa-phone-alt"></i> Contact Us</a>
+            <a class="btn btn-info custombtn ml-md-auto" href="{{url('/contact-us')}}"><i class="fas fa-phone-alt"></i>Contacto</a>
 
             <a class="navbar-toggler crossicon" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"> 
               <i class="far fa-times-circle"></i>

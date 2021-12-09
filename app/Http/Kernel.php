@@ -66,6 +66,6 @@ class Kernel extends HttpKernel
         'CheckUserAuth' => \App\Http\Middleware\CheckUserAuth::class,
         'admin'=>\App\Http\Middleware\CheckAdminLogin::class,
         'token_auth'=>\App\Http\Middleware\TokenAuth::class,
-        
+        'cors' => \App\Http\Middleware\CORS::class,
     ];
 }
