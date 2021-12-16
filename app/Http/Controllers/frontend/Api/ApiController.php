@@ -338,7 +338,7 @@ class ApiController extends Controller
         $input = $request->all();
         $sellerInformation  = Auth::guard('api')->user();
 
-        $sellerCategories = SellerCategory::where('seller_id',$sellerInformation['id'])->orderBy('id','DESC')->get();
+        $sellerCategories = SellerCategory::withCount('sellerProducts')->where('seller_id',$sellerInformation['id'])->orderBy('id','DESC')->get();
         if($sellerCategories){
             return response()->json(['status' => true,'message' => 'Get product seller category list','sellerCategories'=>$sellerCategories,'code' => 200]);
         }else{
@@ -355,11 +355,12 @@ class ApiController extends Controller
         $sellerProduct   = SellerProduct::where('category_id',$category_id)
                                         ->where('seller_id',$sellerInformation['id'])
                                         ->with('sellerInfo','sellerProductImages','sellerUnit','sellerCategory','productCart')
-                                        ->get();
-        if($sellerProduct){
-            return response()->json(['status' => true,'message' => 'Get products of category','sellerProducts'=>$sellerProduct,'code' => 200]);
+                                        ->get(); 
+        $sellerCategory = SellerCategory::find($category_id);
+        if($sellerCategory){
+            return response()->json(['status' => true,'message' => 'Get category details','sellerCategory'=>$sellerCategory,'categoryProducts'=>$sellerProduct,'code' => 200]);
         }else{
-            return response()->json(['status' => false,'message' => 'No products of category found', 'code' => 400]);
+            return response()->json(['status' => false,'message' => 'No category found', 'code' => 400]);
         }
     }
 
@@ -425,7 +426,7 @@ class ApiController extends Controller
                'name'        =>'required'
             ]
         );
-
+        
         if ($validator->fails()) {
             $response['code'] = 404;
             $response['status'] = $validator->errors()->first();
@@ -437,13 +438,12 @@ class ApiController extends Controller
 
         $sellerCategories = SellerCategory::with('seller')
                                         ->where('id',$category_id)
-                                        ->where('seller_id',$sellerInformation['id'])
                                         ->first();
         
 
                                     
         $image = isset($input['image']) && !empty($input['image']) ? $input['image']:'';  
-
+        $old_image = $sellerCategories['image'];
         if(isset($input['image'])){
             if($image){ 
               $directory = 'frontend/assets/img/productCategoryImage';
@@ -453,25 +453,23 @@ class ApiController extends Controller
                     $image = $imagedata['image'];
                 }
             }
+            if($old_image && file_exists('public/frontend/assets/img/productCategoryImage/'.$old_image)){
+                unlink('public/frontend/assets/img/productCategoryImage/'.$old_image);    
+            }
+        }else{
+            $image = $old_image;
         }
 
-        if (file_exists('public/frontend/assets/img/productCategoryImage/'.$SellerCategory['image'])){
-            unlink('public/frontend/assets/img/productCategoryImage/'.$sellerCategories['image']);
-        }
 
-        SellerCategory::where('id',$category_id)
+        $result = SellerCategory::where('id',$category_id)
                         ->update([
                            'name'       => @$input['name'],
                            'seller_id'  => $sellerInformation['id'],                         
                            'image'      => @$image
                         ]);                                  
-
-        $sellerCategories = SellerCategory::with('seller')
-                                        ->where('id',$category_id)
-                                        ->where('seller_id',$sellerInformation['id'])
-                                        ->first();                
-        if($sellerCategories){
-            return response()->json(['status' => true,'message' => 'Seller categories update','sellerCategories'=>$sellerCategories,'code' => 200]);
+             
+        if($result){
+            return response()->json(['status' => true,'message' => 'Seller product updated','sellerCategory'=>$result,'code' => 200]);
         }else{
             return response()->json(['status' => false,'message' => 'No category found', 'code' => 400]);
         }
@@ -481,7 +479,7 @@ class ApiController extends Controller
         $SellerCategory = SellerCategory::where('id',$id)->first();
         if($SellerCategory){
 
-            if (file_exists('public/frontend/assets/img/productCategoryImage/'.$SellerCategory['image'])){
+            if ($SellerCategory['image'] && file_exists('public/frontend/assets/img/productCategoryImage/'.$SellerCategory['image'])){
                 unlink('public/frontend/assets/img/productCategoryImage/'.$SellerCategory['image']);
             }
 
@@ -2105,8 +2103,7 @@ class ApiController extends Controller
             $request->all(),
                 [
                    'field_type'         => 'required',
-                   'field_name'         => 'required',
-                   'is_required'        => 'required'
+                   'field_name'         => 'required'
                 ]
         );
 

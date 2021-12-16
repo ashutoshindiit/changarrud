@@ -18,7 +18,7 @@ class GuestAuth
     public function handle($request, Closure $next)
     {
         $cookie_name = "guestId";
-        if(!isset($_COOKIE[$cookie_name])) {
+        if(!isset($_COOKIE[$cookie_name]) && empty($_COOKIE[$cookie_name])) {
             $cookie_value = date('Ymdhis');
             // echo "<pre>"; print_r($cookie_value); die;
             setcookie($cookie_name, $cookie_value, time() + (86400), "/"); // 86400 = 1 day

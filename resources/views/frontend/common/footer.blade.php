@@ -510,8 +510,15 @@
     <input  type="hidden" class="userId" name="userId" value="{{Auth::user()->id}}">
 
 @else
-
-    <input  type="hidden" class="userId" name="userId" value="{{$_COOKIE['guestId']}}">
+    @php 
+    $cookie_name = "guestId";
+    if(!isset($_COOKIE[$cookie_name]) && empty($_COOKIE[$cookie_name])) {
+        $cookie_value = date('Ymdhis');
+        setcookie($cookie_name, $cookie_value, time() + (86400), "/"); // 86400 = 1 day
+        $_COOKIE['guestId'] = $cookie_value;
+    }    
+    @endphp
+    <input  type="hidden" class="userId" name="userId" value="{{ $_COOKIE['guestId']}}">
 
 
 
@@ -1684,7 +1691,8 @@
     $(document).on('click','#checkout_button_order_confirm',function(e){
         e.preventDefault();
         var auth = "{{Auth::check()}}";
-
+        var shipQuotes = $('input[name=order_shipping_quotes_data]').val();
+        console.log('hiiii');
         var additionalfields = {};
                                   
         $(".additionalFieldsFormData input").each(function(i,a){
@@ -1693,7 +1701,10 @@
         });
 
         if(auth!=''){
-
+            console.log('logged in');
+            console.log(shipQuotes);
+            if(!shipQuotes) { console.log('ship not selected'); }
+            return false; 
             selectedsubId        = $('#sub_active').val();
             var defaultAddressId = $("#defaultAddressId").val();
             console.log( defaultAddressId,selectedsubId)
@@ -1917,7 +1928,41 @@
 
     });
 
-
+    function getShipQuotes()
+    {
+        
+        $.ajax({
+            url: "{{ url('/ajax/shipping_quotes_get') }}",
+            type:'post',
+            data:{_token:"{{ csrf_token() }}" },
+            beforeSend: function() {
+                $('.order-loader').css('visibility','visible');
+            },            
+            success:function(response){
+                var data = JSON.parse(response);
+                console.log(data);
+                if(data.total_count > 0 && data.results){
+                    console.log('hello');
+                    var elm = '.order_shipping_quotes_data';
+                    $(data.results).each(function(i,v){
+                        console.log(v);
+                        var html = '<p><input type="radio" name="order_shipping_quotes_data" value="'+v.object_id+'" checked="checked"><span>Amount : '+v.amount+'</span><span class="provider_name">'+v.provider+'</span><span class="provider_img"><img width="200px" src="https://dev-sandbox.mienvio.mx/'+v.provider_img+'"></span><span class="provider_day">Time : '+v.days+' Days</span></p>';
+                        $(elm).append(html);
+                        return false;
+                    });
+                    $('.order_shipping_quotes').show();
+                }else{
+                    console.log('no shipping method found');
+                }
+            },
+            error: function(xhr) { // if error occured
+                $('.order-loader').css('visibility','hidden');
+            },
+            complete: function() {
+               $('.order-loader').css('visibility','hidden');
+            },            
+        });         
+    }
 
     $(document).ready(function(){
 

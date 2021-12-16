@@ -90,7 +90,7 @@ use App\Http\Controllers\FeatureController;
 
 		Route::any('/{slug}/cart-checkout', [HomeController::class, 'cartCheckout']);
 
-	Route::group(['middleware'=>'CheckUserAuth'],function(){
+		Route::group(['middleware'=>'CheckUserAuth'],function(){
 		// After Login Routes
 
 		Route::any('/{slug}/my-orders', [HomeController::class, 'myOrders']);
@@ -273,5 +273,5 @@ use App\Http\Controllers\FeatureController;
 
 		});
 
-
+		Route::post('/ajax/shipping_quotes_get',  [HomeController::class, 'getShippingQuotes']); 
 		//define('defaultAdminImagePath',asset('public/admin/images/'));
