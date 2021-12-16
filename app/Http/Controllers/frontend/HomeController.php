@@ -40,6 +40,7 @@ use App\Models\ChangarruFeature;
 use App\Models\HomepageInformation;
 use App\Models\Testimonial;
 use App\Models\Page;
+use GuzzleHttp\Client as GuzzleClient;
 
 class HomeController extends Controller
 
@@ -1487,6 +1488,76 @@ class HomeController extends Controller
         $termAndCondtions = TermAndCondtion::first();
         return view('frontend.terms-conditions',compact('termAndCondtions','slug'));
     } 
+
+    public function getShippingQuotes(Request $request)
+    {
+        $temp_token = "YaL96UnsIzZR0B859IwboW1GanUFkfHoKd0QRHC4qmiJyBlJ3oyxSBKt1Okp";
+        $headers = [
+            "Authorization" => "Bearer " . $temp_token,
+            "Cache-Control" => "no-cache",
+            "Accept" => "application/json",
+        ];
+        $data = array (
+            'address_from' => 
+                    array (
+                    'name' => 'Nombre de Remitente',
+                    'phone' => '5555555555',
+                    'email' => 'mail@example.com',
+                    'zipcode' => '56356',
+                    'country' => 'MX',
+                    'street' => 'Av. Principal 34',
+                    'street2' => 'Col centro.',
+                    'alias' => 'Alias de la dirección',
+                    'object_type' => 'PURCHASE',
+                    ),
+            'address_to' => 
+                    array (
+                    'name' => 'Nombre de Destinatario',
+                    'phone' => '2222222222',
+                    'email' => 'mail@example.com',
+                    'zipcode' => '62736',
+                    'country' => 'MX',
+                    'street' => 'Calle Quetzal 9',
+                    'street2' => 'Colonia bella',
+                    'alias' => 'Alias de la dirección',
+                    'object_type' => 'PURCHASE',
+                    ),
+            'quote' => 
+                array (
+                    'items' => 
+                            array ( 
+                                array (
+                                'declared_value' => 5000,
+                                'height' => 2,
+                                'id' => 'id-1',
+                                'length' => 2,
+                                'qty' => 1,
+                                'weight' => 3.22,
+                                'width' => 2,
+                                ),
+                                array (
+                                'declared_value' => 2500,
+                                'height' => 2,
+                                'id' => 'id-2',
+                                'length' => 15,
+                                'qty' => 1,
+                                'weight' => 1,
+                                'width' => 13,
+                                ),
+                            ),
+                    'object_purpose' => 'QUOTE',
+                ),
+        );
+        $g_uri = "https://dev-sandbox.mienvio.mx/";
+        
+        $client = new \GuzzleHttp\Client();
+        $response = $client->post("https://dev-sandbox.mienvio.mx/api/quoteShipment" ,[
+            'headers' => $headers,
+            'json' => $data,
+        ]);
+        $result =  $response->getBody()->getContents();        
+        return $result;
+    }
 
 }
 

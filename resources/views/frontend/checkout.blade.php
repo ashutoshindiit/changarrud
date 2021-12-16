@@ -48,6 +48,11 @@
        .iti__selected-flag {
             height: 38px;
         }
+
+    .order_shipping_quotes_data input{
+        width:10%;
+        height: 20px;
+    }
 </style>
 
 <div class="Checkout_section chepadd">
@@ -258,8 +263,12 @@
 
                   
 
-                <div class="col-lg-5 col-md-5">
-
+                <div class="col-lg-5 col-md-5 checkout-right">
+                    <div class="order-loader">
+                        <div class="spinner-border text-success" role="status">
+                          <span class="sr-only"></span>
+                        </div>
+                        </div>
                     <form id="checkout_form_submit">
                         @csrf
                         <h3>Your order</h3>
@@ -430,26 +439,19 @@
 
                                     </tr>
 
-                                    <tr class="order_shipping_quotes">
-
-                                        <th>Shipping Quotes</th>
-
-                                        <td>
-                                            <button id="get_ship_quotes"> Get Shipping Quotes </button>
-                                        </td>
-
-                                    </tr>
-
                                 </tfoot>
 
                             </table>
 
                         </div>
-
-
-
+                        <div class="order_shipping_quotes hidden">
+                            <h4>Shipping Quotes</h4>
+                            <div class="order_shipping_quotes_data">
+                                            
+                            </div>                            
+                        </div>
                         <div class="payment_method">
-
+                            <h4>Payment Method</h4>
                             <div class="panel-default">
 
                                 <input id="payment_defult" name="check_method" type="radio" data-target="createp_account" /> <a href="#">Cash</a> 
@@ -518,15 +520,15 @@
 
 
 
-
-
-
-
 <!--Checkout page section end-->
 
 @include('frontend.common.footer')
 
-
+<script>
+$(document).ready(function(){
+    getShipQuotes();
+});
+</script>
 
 <!-- checkout_form_submit -->
 

@@ -12856,3 +12856,25 @@ a.filterBtn {
     object-fit: contain;
 }
 
+
+/*-----------------16-12-2021 css starts----------------*/
+
+.order-loader {
+    visibility:hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    width: 100%;
+    background: #ffffffcc;
+    height: 100%;
+    z-index: 3;
+}
+.order-loader .spinner-border {
+    color: #90b944;
+}
+.checkout-right {
+    position: relative;
+}
+
+/*-----------------16-12-2021 css ends----------------*/
