@@ -1400,7 +1400,7 @@ class HomeController extends Controller
     }
 
 
-    public function getShipQuotes()
+    public function getShipQuotes($data)
     {
         $temp_token = "YaL96UnsIzZR0B859IwboW1GanUFkfHoKd0QRHC4qmiJyBlJ3oyxSBKt1Okp";
         $headers = [
@@ -1408,57 +1408,6 @@ class HomeController extends Controller
             "Cache-Control" => "no-cache",
             "Accept" => "application/json",
         ];
-        $data = array (
-            'address_from' => 
-                    array (
-                    'name' => 'Nombre de Remitente',
-                    'phone' => '5555555555',
-                    'email' => 'mail@example.com',
-                    'zipcode' => '56356',
-                    'country' => 'MX',
-                    'street' => 'Av. Principal 34',
-                    'street2' => 'Col centro.',
-                    'alias' => 'Alias de la dirección',
-                    'object_type' => 'PURCHASE',
-                    ),
-            'address_to' => 
-                    array (
-                    'name' => 'Nombre de Destinatario',
-                    'phone' => '2222222222',
-                    'email' => 'mail@example.com',
-                    'zipcode' => '62736',
-                    'country' => 'MX',
-                    'street' => 'Calle Quetzal 9',
-                    'street2' => 'Colonia bella',
-                    'alias' => 'Alias de la dirección',
-                    'object_type' => 'PURCHASE',
-                    ),
-            'quote' => 
-                array (
-                    'items' => 
-                            array ( 
-                                array (
-                                'declared_value' => 5000,
-                                'height' => 2,
-                                'id' => 'id-1',
-                                'length' => 2,
-                                'qty' => 1,
-                                'weight' => 3.22,
-                                'width' => 2,
-                                ),
-                                array (
-                                'declared_value' => 2500,
-                                'height' => 2,
-                                'id' => 'id-2',
-                                'length' => 15,
-                                'qty' => 1,
-                                'weight' => 1,
-                                'width' => 13,
-                                ),
-                            ),
-                    'object_purpose' => 'QUOTE',
-                ),
-        );
         $g_uri = "https://dev-sandbox.mienvio.mx/";
         
         $client = new \GuzzleHttp\Client();
@@ -1526,19 +1475,36 @@ class HomeController extends Controller
                 'phone' => $defaultAddress->mobile_number,
                 'email' => Auth::user()->email,
                 'zipcode' => $defaultAddress->pincode,
-                'country' => $defaultAddress->isd_flag,
+                'country' => "MX",
                 'street' => $defaultAddress->street,
                 'street2' => $defaultAddress->street2,
-                'alias' => Auth::user()->alias,
+                'alias' => $defaultAddress->address,
                 'object_type' => 'PURCHASE',                
             );                
         }else{
             $address_to = array();
         }
-
+        $shipdata = array();
+        if($address_to && $address_from && $shipItems)
+        {
+            $data = array (
+                'address_from' => $address_from,
+                'address_to' => $address_to,
+                'quote' => 
+                    array (
+                        'items' => $shipItems,
+                        'object_purpose' => 'QUOTE',
+                    ),
+            );
+            $shipdata = $this->getShipQuotes($data);
+            if($shipdata){
+                $shipdata = json_decode($shipdata);
+                $shipdata = $shipdata->results[0];
+            }
+        }
         
         $storeSetting = SellerAdditionalInformation::where('seller_id',$seller['id'])->get();
-        return view('frontend.checkout',compact('sellerProduct','sumProductPrice','slug','userId','defaultAddress','storeSetting'));
+        return view('frontend.checkout',compact('sellerProduct','sumProductPrice','slug','userId','defaultAddress','storeSetting','shipdata'));
 
     }
 
