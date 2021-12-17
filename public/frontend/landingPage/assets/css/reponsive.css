@@ -233,7 +233,7 @@ body
 	.bannersection
 	{
 		background-position: -0px 100%;
-		height: 800px;
+		height: 850px;
 	}
 
 	.plrany a
@@ -374,14 +374,16 @@ body
 	.bannersection .bannerBox .bimg1 {
 	    width: 200px;
 	        border-radius: 20px;
-	    height: 200px;
+	    height: 245px;
 	}
 	
 	.bannersection .bannerBox .bimg2
 	{
 		    border-radius: 20px;
 		 width: 200px;
-	    height: 200px;
+	    height: 245px;
+	    left: auto;
+	    right: 10px;
 	}
 
 	.orderMobile .row .orb
@@ -428,5 +430,30 @@ body
 	.dlab-media img
 	{
 		width: 100%;
+	}
+}
+
+@media only screen and (max-width: 360px) {
+	
+
+	.bannersection
+	{
+		background-position: -0px 100%;
+		height: 900px;
+	}
+
+	.bannersection .bannerBox .bimg1 {
+	    width: 150px;
+	        border-radius: 20px;
+	    height: 210px;
+	}
+	
+	.bannersection .bannerBox .bimg2
+	{
+		    border-radius: 20px;
+		 width: 150px;
+	    height: 210px;
+	    left: initial;
+	    right: 10px;
 	}
 }
