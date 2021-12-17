@@ -458,11 +458,13 @@
                             </table>
 
                         </div>
-                        <div class="order_shipping_quotes hidden">
+                        <div class="order_shipping_quotes @if(!$shipdata) hidden @endif">
                             <h4>Shipping Quotes</h4>
                             <div class="order_shipping_quotes_data">
-                                            
-                            </div>                            
+                                @if($shipdata)
+                                    <p><input type="radio" name="order_shipping_quotes_data" value="{{ $shipdata->object_id }}" checked="checked"><span>Amount : {{$shipdata->amount}} </span><span class="provider_name">{{ $shipdata->provider }}</span><span class="provider_img"><img width="200px" src="https://dev-sandbox.mienvio.mx/{{ $shipdata->provider_img }}"></span><span class="provider_day">Time : {{ $shipdata->days }} Days</span></p>
+                                @endif                                            
+                            </div> 
                         </div>
                         <div class="payment_method">
                             <h4>Payment Method</h4>
@@ -543,7 +545,7 @@
 
 <script>
 $(document).ready(function(){
-    getShipQuotes();
+    //getShipQuotes();
 });
 </script>
 
