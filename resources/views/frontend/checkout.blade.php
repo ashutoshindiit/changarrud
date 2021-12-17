@@ -67,8 +67,6 @@
 
                 @if(Auth::check())
 
-                
-
                 <?php 
 
                     if (Auth::check()) {
@@ -110,7 +108,7 @@
                         @if(isset($userAddresses) && sizeof($userAddresses)>0)
 
                             @foreach($userAddresses as $key => $userAddress)
-
+                        
                                @if(!empty($userAddress))
 
                                     <div class="col-md-6 checkoutclassAddressSelected ">
@@ -234,7 +232,23 @@
                                             <input type="text" class="addformEmpty" name="city" id="add_city" value="" placeholder="Enter City">  
 
                                         </div>
-
+                                        
+                                      <div class="col-md-6 mb-20">
+                    
+                                         <label for="country">Street <span>*</span></label>
+                    
+                                          <input type="text" class="addformEmpty" name="street" id="add_street" value="" placeholder="Enter Street">  
+                    
+                                      </div>
+                                      
+                                      <div class="col-md-6 mb-20">
+                    
+                                         <label for="country">Street 2</label>
+                    
+                                          <input type="text" class="addformEmpty" name="street2" id="add_street2" value="" placeholder="Enter Street 2">  
+                    
+                                      </div>  
+                                      
                                         <div class="col-12 mb-10 contact_message">
 
                                             <label>Address  <span>*</span></label>
@@ -453,9 +467,12 @@
                         <div class="payment_method">
                             <h4>Payment Method</h4>
                             <div class="panel-default">
-
-                                <input id="payment_defult" name="check_method" type="radio" data-target="createp_account" /> <a href="#">Cash</a> 
-
+                                <input id="payment_defult" name="check_method" type="radio" data-target="createp_account" /> 
+                                <label for="payment_defult" href="#">Cash</label> 
+                            </div>
+                            <div class="panel-default">
+                                <input id="payment_srpago" name="check_method" type="radio" value="srpago" data-target="createp_account" /> 
+                                <label for="payment_srpago">Sr. Pago</label> 
                             </div>
 
                             <div class="order_button mt-4">

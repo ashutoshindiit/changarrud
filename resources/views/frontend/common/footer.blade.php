@@ -212,7 +212,23 @@
                       <input type="text" class="addformEmpty" name="city" id="add_city" value="" placeholder="Enter City">  
 
                   </div>
+                  
+                  <div class="col-md-6 mb-20">
 
+                     <label for="country">Street <span>*</span></label>
+
+                      <input type="text" class="addformEmpty" name="street" id="add_street" value="" placeholder="Enter Street">  
+
+                  </div>
+                  
+                  <div class="col-md-6 mb-20">
+
+                     <label for="country">Street 2</label>
+
+                      <input type="text" class="addformEmpty" name="street2" id="add_street2" value="" placeholder="Enter Street 2">  
+
+                  </div>   
+                  
                   <div class="col-12 mb-10 contact_message">
 
                      <label>Address  <span>*</span></label>
@@ -1290,6 +1306,10 @@
             var pincode         = $("#add_pincode").val();
 
             var city            = $("#add_city").val();
+            
+            var street          = $("#add_street").val();
+        
+            var street2         = $("#add_street2").val();
 
             var address         = $("#add_address").val();
 
@@ -1309,7 +1329,7 @@
 
                     type:'post',
 
-                    data:{isd_flag:isd_flag,isd_code:isd_code,address:address,city:city,pincode:pincode,name:name,mobile_number:mobile_number,slug:slug,_token:"{{ csrf_token() }}" },
+                    data:{isd_flag:isd_flag,isd_code:isd_code,address:address,city:city,street:street,street2:street,pincode:pincode,name:name,mobile_number:mobile_number,slug:slug,_token:"{{ csrf_token() }}" },
 
                     success:function(response){
 
@@ -1762,6 +1782,8 @@
                var isd_code        = $("#isd_code1").val();
                var pincode         = $("#add_pincode").val();
                var city            = $("#add_city").val();
+               var street          = $("#add_street").val();
+               var street2         = $("#add_street2").val();
                var address         = $("#add_address").val();
                var isd_flag        = $("#isd_flag1").val();
 
@@ -1779,7 +1801,7 @@
                 $.ajax({
                     url: "{{ url('/') }}"+'/'+slug+'/without-login-confirm-order' ,
                     type:'post',
-                    data:{additionalfields:additionalfields,isd_flag:isd_flag,isd_code:isd_code,address:address,city:city,pincode:pincode,name:name,mobile_number:mobile_number,slug:slug,final_price:final_price,tax:tax,grand_total_price:grand_total_price,myarray:JSON.stringify(myarray),_token:"{{ csrf_token() }}" },
+                    data:{additionalfields:additionalfields,isd_flag:isd_flag,isd_code:isd_code,street:street,street2:street2,address:address,city:city,pincode:pincode,name:name,mobile_number:mobile_number,slug:slug,final_price:final_price,tax:tax,grand_total_price:grand_total_price,myarray:JSON.stringify(myarray),_token:"{{ csrf_token() }}" },
 
                     success:function(response){
                         if(response.status=="true") { 
