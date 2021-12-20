@@ -15,11 +15,16 @@ class User extends Authenticatable
 
     protected $table = 'users';
     protected $fillable = ['mobile_number','otp','verified_status','isd_code'];
-
+    protected $appends = ['full_number'];
+    
     public function userAddress()
     {
         return $this->hasOne('App\Models\UserAddress', 'user_id', 'id');
-        
+    }
+    
+    public function getFullNumberAttribute() // notice that the attribute name is in CamelCase.
+    {
+        return '+'.$this->isd_code.$this->mobile_number;
     }
 }
 

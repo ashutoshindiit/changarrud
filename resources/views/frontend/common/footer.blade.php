@@ -196,10 +196,17 @@
                   </div>
 
 
-
                   <div class="col-md-6 mb-20">
 
-                     <label>Pincode</label>
+                     <label>Email <span>*</span></label>
+
+                     <input class="addformEmpty" type="text"  id="add_email" name="email" value="" placeholder="Enter Email">     
+
+                  </div>
+                  
+                  <div class="col-md-6 mb-20">
+
+                     <label>Pincode <span>*</span></label>
 
                      <input class="addformEmpty" type="text"  id="add_pincode" name="pincode" value="" placeholder="Enter Pincode">     
 
@@ -1300,6 +1307,8 @@
             var name            = $("#add_name").val();
 
             var mobile_number   = $("#add_mobile_number").val();
+            
+            var email           = $("#add_email").val();
 
             var isd_code        = $("#isd_code1").val();
 
@@ -1329,7 +1338,7 @@
 
                     type:'post',
 
-                    data:{isd_flag:isd_flag,isd_code:isd_code,address:address,city:city,street:street,street2:street,pincode:pincode,name:name,mobile_number:mobile_number,slug:slug,_token:"{{ csrf_token() }}" },
+                    data:{isd_flag:isd_flag,isd_code:isd_code,address:address,email:email,city:city,street:street,street2:street,pincode:pincode,name:name,mobile_number:mobile_number,slug:slug,_token:"{{ csrf_token() }}" },
 
                     success:function(response){
 
@@ -1600,7 +1609,7 @@
 
 
     $(document).on('click','.checkoutclassAddressSelected',function() {
-
+        var old_val = $('#sub_active').val();
         $('.plan_wrpr').removeClass('active');
 
         $(this).children('.plan_wrpr').addClass('active');
@@ -1608,9 +1617,11 @@
         subId = $(this).closest('div').find('.sub_id').val();
 
         // alert($(this).closest('div').find('.sub_id').val());
-
         $('#sub_active').val(subId);
-
+        if(old_val != subId){
+            console.log('value chnaged');
+            getShipQuotes(subId);
+        }
         $(this).addClass("plan_wrpr");
 
     });
@@ -1950,32 +1961,31 @@
 
     });
 
-    function getShipQuotes()
+    function getShipQuotes(aID)
     {
-        
         $.ajax({
             url: "{{ url('/ajax/shipping_quotes_get') }}",
             type:'post',
-            data:{_token:"{{ csrf_token() }}" },
+            data:{_token:"{{ csrf_token() }}", aID:aID, slug:"{{ @$slug }}" },
             beforeSend: function() {
                 $('.order-loader').css('visibility','visible');
             },            
-            success:function(response){
-                var data = JSON.parse(response);
-                console.log(data);
-                if(data.total_count > 0 && data.results){
-                    console.log('hello');
+            success:function(v){
+                var order_total_price = $('#order_total_price').attr('data-price');
+                var ship_price = 0.00;
+                if(v.err_status == true){
                     var elm = '.order_shipping_quotes_data';
-                    $(data.results).each(function(i,v){
-                        console.log(v);
-                        var html = '<p><input type="radio" name="order_shipping_quotes_data" value="'+v.object_id+'" checked="checked"><span>Amount : '+v.amount+'</span><span class="provider_name">'+v.provider+'</span><span class="provider_img"><img width="200px" src="https://dev-sandbox.mienvio.mx/'+v.provider_img+'"></span><span class="provider_day">Time : '+v.days+' Days</span></p>';
-                        $(elm).append(html);
-                        return false;
-                    });
-                    $('.order_shipping_quotes').show();
+                    $(elm).html("No shipping method found");
                 }else{
-                    console.log('no shipping method found');
+                    var elm = '.order_shipping_quotes_data';
+                    var html = '<p><input type="radio" name="order_shipping_quotes_data" value="'+v.object_id+'" checked="checked"><span>Amount : '+v.amount+'</span><span class="provider_name">'+v.provider+'</span><span class="provider_img"><img width="200px" src="https://dev-sandbox.mienvio.mx/'+v.provider_img+'"></span><span class="provider_day">Time : '+v.days+' Days</span></p>';
+                    $(elm).html(html);
+                    $('.order_shipping_quotes').show();   
+                    ship_price = v.amount;
                 }
+                var grand_total = (+order_total_price + +ship_price);
+                $('#grand_total_price').text(grand_total.toFixed(2)); 
+
             },
             error: function(xhr) { // if error occured
                 $('.order-loader').css('visibility','hidden');
@@ -2029,7 +2039,13 @@
                     required:true
 
                 },
-
+                street:{
+                    required:true
+                },
+                email: {
+                      required: true,
+                      email: true
+                },
             },
 
             messages:{
@@ -2043,6 +2059,18 @@
                 mobile_number:{
 
                     required:"Please enter mobile number"
+
+                },
+
+                street:{
+
+                    required:"Please enter street"
+
+                },
+
+                email:{
+
+                    required:"Please enter email"
 
                 },
 

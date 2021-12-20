@@ -21,4 +21,7 @@ class ordersDetail extends Model
         return $this->hasOne('App\Models\SellerProduct', 'id', 'product_id');
     }
     
+    public function orderProductImages(){
+        return $this->hasMany('App\Models\SellerImage', 'id', 'product_id');
+    }  
 }

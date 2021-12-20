@@ -41,6 +41,8 @@ use App\Models\HomepageInformation;
 use App\Models\Testimonial;
 use App\Models\Page;
 use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Exception\ConnectException;
 
 class HomeController extends Controller
 
@@ -455,6 +457,8 @@ class HomeController extends Controller
                                 'street' => $data['street'],
                                 
                                 'street2' => $data['street2'],
+                                
+                                'email' => $data['email'],
 
                             ])->id;
 
@@ -483,6 +487,8 @@ class HomeController extends Controller
                                     'street' => $data['street'],
                                 
                                     'street2' => $data['street2'],
+                                    
+                                    'email' => $data['email'],
 
                                 ])->id;
 
@@ -1411,10 +1417,26 @@ class HomeController extends Controller
         $g_uri = "https://dev-sandbox.mienvio.mx/";
         
         $client = new \GuzzleHttp\Client();
-        $response = $client->post("https://dev-sandbox.mienvio.mx/api/quoteShipment" ,[
-            'headers' => $headers,
-            'json' => $data,
-        ]);
+        
+        try{
+            $response = $client->post("https://dev-sandbox.mienvio.mx/api/quoteShipment" ,[
+                'headers' => $headers,
+                'json' => $data,
+            ]);
+        }
+        catch (ConnectException $e) {
+        	// Connection exceptions are not caught by RequestException
+        	$err = array();
+        	$err['status'] = true;
+        	$err['msg'] = "Internet, DNS, or other connection error";
+        	return $err;
+        }
+        catch (RequestException $e) {
+        	$err = array();
+        	$err['err_status'] = true;
+        	$err['msg'] = "Request Exception";
+        	return $err;
+        } 
         $result =  $response->getBody()->getContents();        
         return $result;
     }
@@ -1433,7 +1455,8 @@ class HomeController extends Controller
         $item_count      = ProductCart::where('user_id',$userId)->count();
 
         $pluckProduct    = ProductCart::where('user_id',$userId)->pluck('product_id');
-
+        
+        if(!$pluckProduct && count($pluckProduct) < 1) return redirect($slug);
         // $sellerProduct   = SellerProduct::whereIn('id',$pluckProduct)
         //                             ->with('sellerInfo','sellerProductImages','sellerUnit','sellerCategory','productCart')
         //                             ->get();
@@ -1469,11 +1492,11 @@ class HomeController extends Controller
             'alias' => $seller->alias,
             'object_type' => 'PURCHASE',                
         );
-        if($defaultAddress){
+        if($defaultAddress && Auth::check()){
             $address_to = array(
                 'name' => $defaultAddress->name,
                 'phone' => $defaultAddress->mobile_number,
-                'email' => Auth::user()->email,
+                'email' => $defaultAddress->email,
                 'zipcode' => $defaultAddress->pincode,
                 'country' => "MX",
                 'street' => $defaultAddress->street,
@@ -1487,6 +1510,7 @@ class HomeController extends Controller
         $shipdata = array();
         if($address_to && $address_from && $shipItems)
         {
+            
             $data = array (
                 'address_from' => $address_from,
                 'address_to' => $address_to,
@@ -1502,7 +1526,6 @@ class HomeController extends Controller
                 $shipdata = $shipdata->results[0];
             }
         }
-        
         $storeSetting = SellerAdditionalInformation::where('seller_id',$seller['id'])->get();
         return view('frontend.checkout',compact('sellerProduct','sumProductPrice','slug','userId','defaultAddress','storeSetting','shipdata'));
 
@@ -1574,73 +1597,94 @@ class HomeController extends Controller
     } 
 
     public function getShippingQuotes(Request $request)
-    {
-        $temp_token = "YaL96UnsIzZR0B859IwboW1GanUFkfHoKd0QRHC4qmiJyBlJ3oyxSBKt1Okp";
-        $headers = [
-            "Authorization" => "Bearer " . $temp_token,
-            "Cache-Control" => "no-cache",
-            "Accept" => "application/json",
-        ];
-        $data = array (
-            'address_from' => 
-                    array (
-                    'name' => 'Nombre de Remitente',
-                    'phone' => '5555555555',
-                    'email' => 'mail@example.com',
-                    'zipcode' => '56356',
-                    'country' => 'MX',
-                    'street' => 'Av. Principal 34',
-                    'street2' => 'Col centro.',
-                    'alias' => 'Alias de la dirección',
-                    'object_type' => 'PURCHASE',
-                    ),
-            'address_to' => 
-                    array (
-                    'name' => 'Nombre de Destinatario',
-                    'phone' => '2222222222',
-                    'email' => 'mail@example.com',
-                    'zipcode' => '62736',
-                    'country' => 'MX',
-                    'street' => 'Calle Quetzal 9',
-                    'street2' => 'Colonia bella',
-                    'alias' => 'Alias de la dirección',
-                    'object_type' => 'PURCHASE',
-                    ),
-            'quote' => 
-                array (
-                    'items' => 
-                            array ( 
-                                array (
-                                'declared_value' => 5000,
-                                'height' => 2,
-                                'id' => 'id-1',
-                                'length' => 2,
-                                'qty' => 1,
-                                'weight' => 3.22,
-                                'width' => 2,
-                                ),
-                                array (
-                                'declared_value' => 2500,
-                                'height' => 2,
-                                'id' => 'id-2',
-                                'length' => 15,
-                                'qty' => 1,
-                                'weight' => 1,
-                                'width' => 13,
-                                ),
-                            ),
-                    'object_purpose' => 'QUOTE',
-                ),
-        );
-        $g_uri = "https://dev-sandbox.mienvio.mx/";
-        
-        $client = new \GuzzleHttp\Client();
-        $response = $client->post("https://dev-sandbox.mienvio.mx/api/quoteShipment" ,[
-            'headers' => $headers,
-            'json' => $data,
-        ]);
-        $result =  $response->getBody()->getContents();        
-        return $result;
+    {   
+        if (Auth::check()) {
+            
+            $userId  = Auth::user()->id;
+            $aid = $request->aID;
+            $slug = $request->slug;
+            $defaultAddress = UserAddress::where('id',$aid)->first();
+            $item_count      = ProductCart::where('user_id',$userId)->count();
+    
+            $pluckProduct    = ProductCart::where('user_id',$userId)->pluck('product_id');
+            
+            $sellerProduct = ProductCart::with('Product.sellerProductColors','Product.sellerProductSizes','Product.sellerInfo','Product.sellerProductImages','Product.sellerUnit','Product.sellerCategory')->where('user_id',$userId)->whereIn('product_id',$pluckProduct)->get();
+            
+            $sumProductPrice = ProductCart::where('user_id',$userId)->sum('total_price');
+    
+            $seller = Seller::where('slug',$slug)->first();
+    
+            $cartProduct = ProductCart::with('Product.sellerProductColors','Product.sellerProductSizes','Product.sellerInfo','Product.sellerProductImages','Product.sellerUnit','Product.sellerCategory')->where('user_id',$userId)->whereIn('product_id',$pluckProduct)->get()->toArray();
+            $shipItems = array();           
+            foreach($cartProduct as $pp){        
+                $shipItems[] = array(
+                                'declared_value' => $pp['total_price'],
+                                'height' => $pp['product']['height'],
+                                'id' => $pp['id'],
+                                'length' => $pp['product']['length'],
+                                'qty' => $pp['product_quantity'],
+                                'weight' => $pp['product']['weight'],
+                                'width' => $pp['product']['width'],                        
+                            );
+            }
+            
+            $address_from = array(
+                'name' => $seller->buisness_name,
+                'phone' => $seller->mobile_number,
+                'email' => $seller->email,
+                'zipcode' => $seller->zipcode,
+                'country' => 'MX',
+                'street' => $seller->street,
+                'street2' => $seller->street2,
+                'alias' => $seller->alias,
+                'object_type' => 'PURCHASE',                
+            );
+            if($defaultAddress && Auth::check()){
+                $address_to = array(
+                    'name' => $defaultAddress->name,
+                    'phone' => $defaultAddress->mobile_number,
+                    'email' => $defaultAddress->email,
+                    'zipcode' => $defaultAddress->pincode,
+                    'country' => "MX",
+                    'street' => $defaultAddress->street,
+                    'street2' => $defaultAddress->street2,
+                    'alias' => $defaultAddress->address,
+                    'object_type' => 'PURCHASE',                
+                );                
+            }else{
+                $address_to = array();
+            }   
+            $shipdata = array();
+            if($address_to && $address_from && $shipItems)
+            {
+                
+                $data = array (
+                    'address_from' => $address_from,
+                    'address_to' => $address_to,
+                    'quote' => 
+                        array (
+                            'items' => $shipItems,
+                            'object_purpose' => 'QUOTE',
+                        ),
+                );
+
+                $shipdata = $this->getShipQuotes($data);
+                
+                if(isset($shipdata['err_status']) && $shipdata['err_status'] == true)
+                {
+                    return $shipdata;  
+                }
+                else
+                {
+                    $shipdata = json_decode($shipdata);
+                    $shipdata = $shipdata->results[0];
+                      
+                }
+            }            
+            return $shipdata;            
+        } else{
+           return '';
+        }
     }
 
 }

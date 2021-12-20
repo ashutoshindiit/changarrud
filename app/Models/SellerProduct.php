@@ -35,7 +35,9 @@ class SellerProduct extends Model
     protected $table = 'seller_products';
 
     protected $fillable = ['seller_id','name','category_id','price','discounted_price','main_price','quantity','unit_id','description','product_slug','product_view_count','weight','length','height','width'];
-
+    
+    protected $appends = ['product_full_slug'];
+    
     public $timestamps = false;
 
     public function sellerProductImages()
@@ -44,9 +46,12 @@ class SellerProduct extends Model
         return $this->hasMany('App\Models\SellerImage', 'product_id', 'id');
     }
 
-
+    public function getProductFullSlugAttribute() // notice that the attribute name is in CamelCase.
+    {
+        return $this->sellerInfo->store_url.'/product-details/'.$this->product_slug;
+    }
+    
     public function sellerUnit()
-
     {
         return $this->hasOne('App\Models\Unit', 'id', 'unit_id');
     }

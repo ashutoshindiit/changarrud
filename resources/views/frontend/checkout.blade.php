@@ -171,7 +171,7 @@
 
 
 
-                        <input type="hidden" name="sub_active" value="" id="sub_active">
+                        <input type="hidden" name="sub_active" value="{{@$userDefaultAddress['id']}}" id="sub_active">
 
                         <input type="hidden" name="default" id="defaultAddressId" value="{{@$userDefaultAddress['id']}}">
 
@@ -215,11 +215,17 @@
 
                                          </div>
 
+                                        <div class="col-md-6 mb-20">
 
+                                            <label for="country">Email <span>*</span></label>
+
+                                            <input type="text" class="addformEmpty" name="email" id="add_email" value="" placeholder="Enter Email">  
+
+                                        </div>
 
                                         <div class="col-md-6 mb-20">
 
-                                            <label>Pincode</label>
+                                            <label>Pincode <span>*</span></label>
 
                                             <input class="addformEmpty" type="text"  id="add_pincode" name="pincode" value="" placeholder="Enter Pincode">     
 
@@ -446,12 +452,30 @@
                                     <tr class="order_total">
 
                                         <th>Order Total</th>
-
-                                        <td><strong>$ {{isset($newGrandAmount) ? number_format($newGrandAmount,2):number_format($sumProductPrice,2)}}</strong>
+                                        @php 
+                                        $orderTotal = isset($newGrandAmount) ? number_format($newGrandAmount,2):number_format($sumProductPrice,2);
+                                        @endphp 
+                                        <td><strong>$ <span id="order_total_price" data-price="{{$orderTotal}}">{{$orderTotal}}</span></strong>
 
                                         </td>
 
                                     </tr>
+                                    
+                                    <tr class="order_total">
+                                        @php 
+                                        $grand_total = $orderTotal;
+                                        if(isset($shipdata->amount) && $shipdata->amount){
+                                            $grand_total =  $grand_total + $shipdata->amount;
+                                        }
+                                        
+                                        @endphp 
+                                        <th>Grand Total</th>
+
+                                        <td><strong>$ <span id="grand_total_price">{{ $grand_total }}</span></strong>
+
+                                        </td>
+
+                                    </tr>                                    
 
                                 </tfoot>
 

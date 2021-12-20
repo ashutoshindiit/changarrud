@@ -301,7 +301,11 @@ class ApiController extends Controller
                               'verified_status'       => 'verified',
                               'store_url'             => @$sellerUrl,
                               'store_address'         => @$input['store_address'],
-                              'store_image'           => @$image
+                              'store_image'           => @$image,
+                              'email'                 => $input['email'],
+                              'street'                => $input['street'],
+                              'street2'               => $input['street2'],
+                              'zipcode'               => $input['zipcode'],
                           ]);
 
         return response()->json(['status' => true,'message' => 'Seller information updated successfully','code' => 200]);
@@ -1344,7 +1348,7 @@ class ApiController extends Controller
     public function getOrderDetail(Request $request,$orderId){
         $sellerInformation  = Auth::guard('api')->user();
 
-        $myOrder = Order::with('orderAddress','orderDetails','orderDetails.seller','seller','user','orderStatus')
+        $myOrder = Order::with('orderAddress','orderDetails','orderDetails.orderProductImages','orderDetails.seller','seller','user','orderStatus')
                             ->where('seller_id',$sellerInformation['id'])  
                             ->where('id',$orderId)
                             ->first();
